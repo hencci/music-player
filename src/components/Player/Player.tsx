@@ -20,6 +20,10 @@ export default function Player(props: Props) {
   return (
     <div className="bg-surface rounded-xl p-6 w-full max-w-md">
       <Artwork song={props.song} />
+
+      {/* Audio visualizer appears only while playing */}
+      {props.isPlaying && <Visualizer />}
+
       <Controls {...props} />
       <ProgressBar value={props.progress} onSeek={props.onSeek} />
       <VolumeControl onChange={props.onVolume} />
