@@ -3,6 +3,7 @@ import ProgressBar from "./ProgressBar.tsx";
 import VolumeControl from "./VolumeControl.tsx";
 import Artwork from "./Artwork.tsx";
 import type { Song } from "../../types/song.ts";
+import Visualizer from "./Visualizer.tsx";
 
 interface Props {
   song: Song;
