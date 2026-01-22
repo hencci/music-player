@@ -1,6 +1,7 @@
 import Controls from "./Controls.tsx";
 import ProgressBar from "./ProgressBar.tsx";
 import VolumeControl from "./VolumeControl.tsx";
+import Artwork from "./Artwork.tsx";
 import type { Song } from "../../types/song.ts";
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 export default function Player(props: Props) {
   return (
     <div className="bg-surface rounded-xl p-6 w-full max-w-md">
+      <Artwork song={props.song} />
       <Controls {...props} />
       <ProgressBar value={props.progress} onSeek={props.onSeek} />
       <VolumeControl onChange={props.onVolume} />
