@@ -25,7 +25,13 @@ export default function Player(props: Props) {
       {/* Audio visualizer appears only while playing */}
       {props.isPlaying && <Visualizer />}
 
-      <Controls {...props} />
+      <Controls
+        isPlaying={props.isPlaying}
+        onPlay={props.onPlay}
+        onPause={props.onPause}
+        onNext={props.onNext}
+        onPrev={props.onPrev}
+      />
       <ProgressBar value={props.progress} onSeek={props.onSeek} />
       <VolumeControl onChange={props.onVolume} />
     </div>

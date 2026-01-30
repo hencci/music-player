@@ -1,40 +1,46 @@
 import { useEffect, useRef, useState } from "react";
-import type { Song } from "../types/song.ts";
+import type { Song } from "../types/song";
 
-/**
- * Central audio engine
- * Encapsulates all HTMLAudioElement logic
- */
-export const useAudioPlayer = (queue: Song[]) => {
+export const useAudioPlayer = (songs: Song[]) => {
   const audioRef = useRef<HTMLAudioElement>(new Audio());
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(1);
 
-  const currentSong = queue[currentIndex];
+  const currentSong = songs.length ? songs[currentIndex] : null;
 
+  // Sync source when songs load OR index changes
   useEffect(() => {
     if (!currentSong) return;
 
-    audioRef.current.src = currentSong.audioUrl;
-    if (isPlaying) audioRef.current.play();
+    const audio = audioRef.current;
+    audio.src = currentSong.audioUrl;
+    audio.load();
   }, [currentSong]);
 
+  // Track progress
   useEffect(() => {
     const audio = audioRef.current;
 
-    const updateProgress = () => {
-      setProgress(audio.currentTime / audio.duration || 0);
+    const update = () => {
+      if (!audio.duration) return;
+      setProgress(audio.currentTime / audio.duration);
     };
 
-    audio.addEventListener("timeupdate", updateProgress);
-    return () => audio.removeEventListener("timeupdate", updateProgress);
+    audio.addEventListener("timeupdate", update);
+    return () => audio.removeEventListener("timeupdate", update);
   }, []);
 
-  const play = () => {
-    audioRef.current.play();
-    setIsPlaying(true);
+  const play = async () => {
+    if (!currentSong) return;
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
+    } catch (err) {
+      console.error("Play failed:", err);
+    }
   };
 
   const pause = () => {
@@ -43,15 +49,19 @@ export const useAudioPlayer = (queue: Song[]) => {
   };
 
   const next = () => {
-    setCurrentIndex((i) => (i + 1) % queue.length);
+    if (!songs.length) return;
+    setCurrentIndex((i) => (i + 1) % songs.length);
   };
 
   const prev = () => {
-    setCurrentIndex((i) => (i - 1 + queue.length) % queue.length);
+    if (!songs.length) return;
+    setCurrentIndex((i) => (i - 1 + songs.length) % songs.length);
   };
 
   const seek = (value: number) => {
-    audioRef.current.currentTime = value * audioRef.current.duration;
+    const audio = audioRef.current;
+    if (!audio.duration) return;
+    audio.currentTime = value * audio.duration;
   };
 
   const changeVolume = (value: number) => {

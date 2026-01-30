@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import { fetchSongs } from "./api/songs.ts";
+import { useAudioPlayer } from "./hooks/useAudioPlayer.ts";
+import Player from "./components/Player/Player.tsx";
+import type { Song } from "./types/song.ts";
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [songs, setSongs] = useState<Song[]>([]);
+
+  useEffect(() => {
+    fetchSongs().then(setSongs);
+  }, []);
+
+  const audio = useAudioPlayer(songs);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <main className="min-h-screen flex items-center justify-center p-4">
+      {audio.currentSong ? (
+        <Player
+          song={audio.currentSong}
+          isPlaying={audio.isPlaying}
+          progress={audio.progress}
+          onPlay={audio.play}
+          onPause={audio.pause}
+          onNext={audio.next}
+          onPrev={audio.prev}
+          onSeek={audio.seek}
+          onVolume={audio.changeVolume}
+        />
+      ) : (
+        <div className="text-gray-400">Loading player...</div>
+      )}
+    </main>
+  );
 }
-
-export default App

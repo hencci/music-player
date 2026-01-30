@@ -9,16 +9,16 @@ export const fetchSongs = async (): Promise<Song[]> => {
     {
       id: "1",
       title: "Night Drive",
-      artist: "Synthwave",
-      audioUrl: "/audio/song1.mp3",
-      artwork: "/artwork/art1.jpg",
+      artist: "Zoe wees",
+      audioUrl: "/Zoe-Wees-Control.mp3",
+      artwork: "https://picsum.photos/400",
     },
     {
       id: "2",
       title: "Deep Focus",
-      artist: "Lo-Fi Beats",
-      audioUrl: "/audio/song2.mp3",
-      artwork: "/artwork/art2.jpg",
+      artist: "Zoe Wees",
+      audioUrl: "/Zoe-Wees-Third-Wheel.mp3",
+      artwork: "https://picsum.photos/400",
     },
   ];
 };
