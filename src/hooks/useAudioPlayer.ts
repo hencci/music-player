@@ -1,46 +1,46 @@
 import { useEffect, useRef, useState } from "react";
-import type { Song } from "../types/song";
+import type { Song } from "../types/song.ts";
 
-export const useAudioPlayer = (songs: Song[]) => {
+/**
+ * Central audio engine
+ * Encapsulates all HTMLAudioElement logic
+ */
+export const useAudioPlayer = (queue: Song[]) => {
   const audioRef = useRef<HTMLAudioElement>(new Audio());
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(1);
 
-  const currentSong = songs.length ? songs[currentIndex] : null;
+  const currentSong = queue[currentIndex];
 
-  // Sync source when songs load OR index changes
   useEffect(() => {
+    const audio = audioRef.current;
     if (!currentSong) return;
 
-    const audio = audioRef.current;
     audio.src = currentSong.audioUrl;
     audio.load();
-  }, [currentSong]);
 
-  // Track progress
+    // ALWAYS resume playback when track changes if player was active
+    if (isPlaying) {
+      audio.play().catch((err) => console.error("Autoplay blocked:", err));
+    }
+  }, [currentSong, isPlaying]);
+
   useEffect(() => {
     const audio = audioRef.current;
 
-    const update = () => {
-      if (!audio.duration) return;
-      setProgress(audio.currentTime / audio.duration);
+    const updateProgress = () => {
+      setProgress(audio.currentTime / audio.duration || 0);
     };
 
-    audio.addEventListener("timeupdate", update);
-    return () => audio.removeEventListener("timeupdate", update);
+    audio.addEventListener("timeupdate", updateProgress);
+    return () => audio.removeEventListener("timeupdate", updateProgress);
   }, []);
 
-  const play = async () => {
-    if (!currentSong) return;
-    try {
-      await audioRef.current.play();
-      setIsPlaying(true);
-    } catch (err) {
-      console.error("Play failed:", err);
-    }
+  const play = () => {
+    audioRef.current.play();
+    setIsPlaying(true);
   };
 
   const pause = () => {
@@ -49,19 +49,17 @@ export const useAudioPlayer = (songs: Song[]) => {
   };
 
   const next = () => {
-    if (!songs.length) return;
-    setCurrentIndex((i) => (i + 1) % songs.length);
+    setCurrentIndex((i) => (i + 1) % queue.length);
+    setIsPlaying(true); // ensures autoplay continues
   };
 
   const prev = () => {
-    if (!songs.length) return;
-    setCurrentIndex((i) => (i - 1 + songs.length) % songs.length);
+    setCurrentIndex((i) => (i - 1 + queue.length) % queue.length);
+    setIsPlaying(true);
   };
 
   const seek = (value: number) => {
-    const audio = audioRef.current;
-    if (!audio.duration) return;
-    audio.currentTime = value * audio.duration;
+    audioRef.current.currentTime = value * audioRef.current.duration;
   };
 
   const changeVolume = (value: number) => {

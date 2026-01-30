@@ -22,6 +22,13 @@ export default function Player(props: Props) {
     <div className="bg-surface rounded-xl p-6 w-full max-w-md">
       <Artwork song={props.song} />
 
+      <div className="text-center mt-4">
+        <h2 className="text-lg font-semibold text-white truncate">
+          {props.song.title}
+        </h2>
+        <p className="text-sm text-gray-400 truncate">{props.song.artist}</p>
+      </div>
+
       {/* Audio visualizer appears only while playing */}
       {props.isPlaying && <Visualizer />}
 
