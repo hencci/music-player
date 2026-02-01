@@ -18,8 +18,11 @@ export const useAudioPlayer = (queue: Song[]) => {
     const audio = audioRef.current;
     if (!currentSong) return;
 
-    audio.src = currentSong.audioUrl;
-    audio.load();
+    // Only change source if different
+    if (audio.src !== window.location.origin + currentSong.audioUrl) {
+      audio.src = currentSong.audioUrl;
+      audio.load(); // safe here because it's a new track
+    }
 
     // ALWAYS resume playback when track changes if player was active
     if (isPlaying) {
@@ -38,9 +41,13 @@ export const useAudioPlayer = (queue: Song[]) => {
     return () => audio.removeEventListener("timeupdate", updateProgress);
   }, []);
 
-  const play = () => {
-    audioRef.current.play();
-    setIsPlaying(true);
+  const play = async () => {
+    try {
+      await audioRef.current.play();
+      setIsPlaying(true);
+    } catch (err) {
+      console.error("PLAY ERROR:", err);
+    }
   };
 
   const pause = () => {
