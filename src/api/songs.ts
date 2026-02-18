@@ -11,14 +11,28 @@ export const fetchSongs = async (): Promise<Song[]> => {
       title: "Control",
       artist: "Zoe wees",
       audioUrl: "/Zoe-Wees-Control.mp3",
-      artwork: "https://picsum.photos/400",
+      artwork: "/artwork/artworks-zoe-wees.jpg",
     },
     {
       id: "2",
       title: "Third Wheel",
       artist: "Zoe Wees",
       audioUrl: "/Zoe-Wees-Third-Wheel.mp3",
-      artwork: "https://picsum.photos/400",
+      artwork: "/artwork/artworks-zoe-wees.jpg",
+    },
+    {
+      id: "3",
+      title: "Overthinking",
+      artist: "Zoe Wees",
+      audioUrl: "/Zoe-Wees-Overthinking.mp3",
+      artwork: "/artwork/artworks-zoe-wees.jpg",
+    },
+    {
+      id: "4",
+      title: "Don't Give Up",
+      artist: "Zoe Wees",
+      audioUrl: "/Zoe-Wees-Dont-give-up.mp3",
+      artwork: "/artwork/artworks-zoe-wees.jpg",
     },
   ];
 };
